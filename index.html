@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
+<title>TIKORA — Ton ticket. Ton accès.</title>
+<style>
+:root{--bg:#080808;--panel:#111;--panel2:#191919;--line:#2b2b2b;--text:#f6f6f6;--muted:#aaa;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+button,input{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.wrap{width:min(1100px,92%);margin:auto}
+header{position:sticky;top:0;z-index:10;background:rgba(8,8,8,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;gap:15px}
+.brand{font-size:1.55rem;font-weight:900;letter-spacing:.12em;display:flex;align-items:center;gap:9px}
+.brand-mark{display:grid;place-items:center;width:31px;height:31px;border-radius:7px;background:#fff;color:#000;font-size:1rem}
+.navlinks{display:flex;gap:22px;color:#ccc;font-size:.9rem}
+.navlinks a:hover{color:#fff}
+.btn{border:1px solid #fff;background:#fff;color:#000;border-radius:8px;padding:12px 17px;font-weight:750;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.ghost{background:transparent;color:#fff;border-color:#454545}
+.btn:hover{opacity:.85}
+.hero{padding:65px 0 42px;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:30px}
+.eyebrow{font-size:.76rem;text-transform:uppercase;letter-spacing:.18em;color:#aaa;font-weight:700}
+h1{font-size:clamp(2.5rem,6vw,4.8rem);line-height:1.02;letter-spacing:-.055em;margin:15px 0}
+h1 span{color:#888}
+.lead{color:#bbb;max-width:540px;font-size:1.05rem}
+.hero-art{min-height:270px;border:1px solid #333;border-radius:18px;background:radial-gradient(ellipse at 50% 40%,#292929 0%,#121212 48%,#090909 100%);display:grid;place-items:center;position:relative;overflow:hidden}
+.hero-art:before,.hero-art:after{content:"";position:absolute;border:1px solid #555;border-radius:50%;width:240px;height:240px}
+.hero-art:after{width:320px;height:320px;border-color:#292929}
+.ticket-art{z-index:1;border:1px solid #666;background:#f5f5f5;color:#080808;border-radius:12px;padding:23px 26px;transform:rotate(-7deg);box-shadow:0 18px 55px #000;max-width:82%}
+.ticket-art strong{font-size:1.65rem;letter-spacing:.1em;display:block}
+.ticket-art small{letter-spacing:.18em}
+.searchbar{display:flex;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:9px;margin:12px 0 32px}
+.searchbar input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;padding:9px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:28px 0 16px}
+h2{font-size:1.55rem;margin:0;letter-spacing:-.03em}
+.muted{color:var(--muted)}
+.filters{display:flex;gap:8px;overflow:auto;padding:2px 0 14px}
+.filter{white-space:nowrap;background:#111;border:1px solid #333;color:#ddd;padding:8px 14px;border-radius:99px}
+.filter.active{background:#fff;color:#000;border-color:#fff}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.event-card{border:1px solid #292929;border-radius:14px;overflow:hidden;background:#101010;transition:transform .18s,border-color .18s}
+.event-card:hover{transform:translateY(-3px);border-color:#666}
+.poster{aspect-ratio:16/10;background:linear-gradient(140deg,#333,#141414 60%,#080808);display:flex;flex-direction:column;justify-content:space-between;padding:17px;position:relative;overflow:hidden}
+.poster:after{content:"";position:absolute;width:180px;height:180px;border:1px solid #555;border-radius:50%;right:-55px;bottom:-70px;box-shadow:0 0 0 20px #ffffff05,0 0 0 40px #ffffff05}
+.poster .tag,.poster strong,.poster small{position:relative;z-index:1}
+.tag{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid #555;background:#151515b8;border-radius:5px;padding:5px 8px;width:max-content}
+.poster strong{font-size:1.35rem;line-height:1.05;max-width:220px}
+.poster small{color:#ccc;letter-spacing:.13em}
+.card-body{padding:15px}
+.card-body h3{font-size:1.03rem;margin:0 0 7px}
+.meta{font-size:.85rem;color:#aaa;display:flex;gap:7px;align-items:center;margin:5px 0}
+.price-row{display:flex;justify-content:space-between;align-items:center;margin-top:15px;gap:8px}
+.price{font-weight:800}
+.small-btn{border:1px solid #555;border-radius:7px;background:transparent;color:#fff;padding:8px 10px;font-weight:700}
+.empty{padding:25px;color:#aaa;border:1px dashed #444;border-radius:12px}
+.detail{display:none;padding:35px 0 65px}
+.back{border:0;background:transparent;color:#ccc;padding:0;margin-bottom:20px}
+.detail-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:start}
+.detail-poster{min-height:340px;border-radius:16px;border:1px solid #333;background:radial-gradient(ellipse at 50% 40%,#3a3a3a,#111 65%,#080808);padding:25px;display:flex;flex-direction:column;justify-content:space-between}
+.detail-poster strong{font-size:clamp(2.2rem,5vw,4rem);line-height:.95;letter-spacing:-.05em;max-width:500px}
+.detail-poster small{letter-spacing:.2em;color:#bbb}
+.detail-info h1{font-size:clamp(2rem,4vw,3.4rem)}
+.info-line{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #292929;color:#ddd}
+.info-line span{color:#aaa;display:block;font-size:.82rem}
+.purchase{margin-top:22px;padding:19px;background:#111;border:1px solid #333;border-radius:14px}
+.purchase h3{margin:0 0 14px}
+.ticket-choice{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #444;border-radius:9px;padding:13px;margin:9px 0;cursor:pointer}
+.ticket-choice.selected{border-color:#fff;background:#202020}
+.ticket-choice small{display:block;color:#aaa}
+.quantity{display:flex;align-items:center;gap:15px;margin:17px 0}
+.quantity button{width:35px;height:35px;border:1px solid #555;border-radius:8px;background:#181818;color:#fff}
+.total{display:flex;justify-content:space-between;border-top:1px solid #333;padding-top:15px;margin-bottom:15px}
+.notice{font-size:.85rem;color:#bbb;margin-top:10px}
+footer{border-top:1px solid #242424;margin-top:60px;padding:27px 0;color:#999;font-size:.85rem}
+footer .foot{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+@media(max-width:760px){.navlinks{display:none}.hero{grid-template-columns:1fr;padding-top:43px}.hero-art{min-height:220px}.grid{grid-template-columns:1fr 1fr}.detail-grid{grid-template-columns:1fr}.detail-poster{min-height:250px}.section-head{align-items:start;flex-direction:column}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.hero{padding-top:34px}.searchbar{flex-wrap:wrap}.searchbar input{flex-basis:100%}.searchbar .btn{width:100%}.poster{aspect-ratio:16/8}.ticket-art{padding:18px}.ticket-art strong{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#" id="homeLink"><span class="brand-mark">T</span> TIKORA</a>
+    <nav class="navlinks"><a href="#events">Événements</a><a href="#how">Comment ça marche</a></nav>
+    <a class="btn ghost" href="#events">Trouver un ticket ↗</a>
+  </div>
+</header>
+<main class="wrap">
+  <section id="homePage">
+    <div class="hero">
+      <div>
+        <div class="eyebrow">La billetterie nouvelle génération</div>
+        <h1>Tes sorties.<br>Tes événements.<br><span>Tes tickets.</span></h1>
+        <p class="lead">Découvre les événements qui font vibrer Abidjan et prépare ta prochaine sortie en quelques clics.</p>
+        <a class="btn" href="#events">Découvrir les événements <span>↗</span></a>
+      </div>
+      <div class="hero-art" aria-label="Illustration ticket TIKORA">
+        <div class="ticket-art"><small>TON ACCÈS COMMENCE ICI</small><strong>TIKORA</strong><div style="border-top:1px dashed #777;margin:13px 0"></div><small>TON TICKET. TON ACCÈS.</small></div>
+      </div>
+    </div>
+    <div class="searchbar"><input id="searchInput" type="search" placeholder="Rechercher un événement, un lieu…" aria-label="Rechercher un événement"><button class="btn" id="searchButton">Rechercher</button></div>
+    <section id="events">
+      <div class="section-head"><div><div class="eyebrow">À l’affiche</div><h2>Les prochains événements</h2></div><div class="muted" id="resultCount">3 événements</div></div>
+      <div class="filters" id="filters">
+        <button class="filter active" data-filter="Tout">Tout</button><button class="filter" data-filter="Concert">Concert</button><button class="filter" data-filter="Festival">Festival</button><button class="filter" data-filter="Humour">Humour</button>
+      </div>
+      <div class="grid" id="eventGrid"></div>
+      <p class="notice">Les événements, dates et tarifs affichés sont des exemples de démonstration, pas des offres réelles.</p>
+    </section>
+    <section id="how" style="margin-top:58px">
+      <div class="eyebrow">Simple comme bonjour</div><h2 style="margin:8px 0 18px">Ton ticket en 3 étapes</h2>
+      <div class="grid">
+        <div class="event-card" style="padding:20px"><div class="eyebrow">01</div><h3>Choisis ton événement</h3><p class="muted">Trouve une sortie qui te plaît et consulte les informations pratiques.</p></div>
+        <div class="event-card" style="padding:20px"><div class="eyebrow">02</div><h3>Réserve ta place</h3><p class="muted">Sélectionne la catégorie et la quantité de tickets souhaitée.</p></div>
+        <div class="event-card" style="padding:20px"><div class="eyebrow">03</div><h3>Accède à l’événement</h3><p class="muted">À terme, reçois ton ticket numérique avec QR code après paiement confirmé.</p></div>
+      </div>
+    </section>
+  </section>
+  <section class="detail" id="detailPage">
+    <button class="back" id="backButton">← Retour aux événements</button>
+    <div class="detail-grid">
+      <div class="detail-poster"><small id="detailCategory">CONCERT · ABIDJAN</small><strong id="detailPosterTitle">JET7 X<br>LAST NIGHT SHOW</strong><small>TIKORA · TON TICKET. TON ACCÈS.</small></div>
+      <div class="detail-info">
+        <div class="eyebrow" id="detailKicker">ÉVÉNEMENT À LA UNE</div>
+        <h1 id="detailTitle">JET7 X LAST NIGHT SHOW EVENT</h1>
+        <p class="muted" id="detailDescription">Un rendez-vous musical et festif avec artistes, DJ et animations.</p>
+        <div class="info-line">▦ <div><strong id="detailDate">15 août — date indicative</strong><span>Date à confirmer par l’organisateur</span></div></div>
+        <div class="info-line">⌖ <div><strong id="detailVenue">Abidjan, Côte d’Ivoire</strong><span>Lieu exact à confirmer</span></div></div>
+        <div class="info-line">◷ <div><strong id="detailTime">À partir de 15 h</strong><span>Horaire indicatif</span></div></div>
+        <div class="purchase">
+          <h3>Choisis ton ticket</h3>
+          <div id="ticketChoices"></div>
+          <div class="quantity"><span>Quantité</span><button id="minusButton" aria-label="Diminuer">−</button><strong id="quantityValue">1</strong><button id="plusButton" aria-label="Augmenter">+</button></div>
+          <div class="total"><span class="muted">Total estimé</span><strong id="totalPrice">5 000 FCFA</strong></div>
+          <button class="btn" id="buyButton" style="width:100%">Continuer (démo) →</button>
+          <p class="notice" id="checkoutNotice">Aucun paiement réel n’est activé sur cette maquette.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap foot"><strong style="color:#fff;letter-spacing:.15em">TIKORA</strong><span>Ton ticket. Ton accès.</span><span>© <span id="year"></span> TIKORA — Prototype</span></div></footer>
+<script>
+const events=[
+ {id:1,title:"JET7 X LAST NIGHT SHOW EVENT",short:"JET7 X LAST NIGHT SHOW",category:"Concert",date:"15 août (indicatif)",time:"À partir de 15 h (indicatif)",venue:"Abidjan, Côte d’Ivoire",price:5000,vip:15000,description:"Un rendez-vous musical et festif avec artistes, DJ et animations. La date, le lieu exact et les tarifs devront être confirmés par l’organisateur."},
+ {id:2,title:"BABI COMEDY NIGHT",short:"BABI COMEDY NIGHT",category:"Humour",date:"22 août (indicatif)",time:"20 h (indicatif)",venue:"Abidjan, Côte d’Ivoire",price:3000,vip:10000,description:"Une soirée dédiée à l’humour et aux talents du stand-up. Informations données à titre de démonstration."},
+ {id:3,title:"URBAN VIBES",short:"URBAN VIBES",category:"Festival",date:"29 août (indicatif)",time:"16 h (indicatif)",venue:"Abidjan, Côte d’Ivoire",price:10000,vip:20000,description:"Un festival autour des cultures urbaines, de la musique et du divertissement. Informations données à titre de démonstration."}
+];
+let activeFilter="Tout",selectedEvent=events[0],selectedType="Standard",quantity=1;
+const money=n=>new Intl.NumberFormat("fr-FR").format(n)+" FCFA";
+function renderEvents(){
+ const q=document.getElementById("searchInput").value.trim().toLowerCase();
+ const shown=events.filter(e=>(activeFilter==="Tout"||e.category===activeFilter)&&(`${e.title} ${e.category} ${e.venue}`).toLowerCase().includes(q));
+ document.getElementById("resultCount").textContent=shown.length+" événement"+(shown.length>1?"s":"");
+ document.getElementById("eventGrid").innerHTML=shown.length?shown.map(e=>`<article class="event-card"><button class="poster" data-open="${e.id}" style="width:100%;text-align:left;color:#fff;border:0;cursor:pointer"><span class="tag">${e.category}</span><strong>${e.short}</strong><small>${e.date.toUpperCase()}</small></button><div class="card-body"><h3>${e.title}</h3><div class="meta">⌖ ${e.venue}</div><div class="price-row"><span class="price">Dès ${money(e.price)}</span><button class="small-btn" data-open="${e.id}">Voir détails ↗</button></div></div></article>`).join(""):'<div class="empty">Aucun événement trouvé. Essaie un autre mot-clé ou une autre catégorie.</div>';
+ document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>openEvent(Number(b.dataset.open))));
+}
+function openEvent(id){
+ selectedEvent=events.find(e=>e.id===id)||events[0];selectedType="Standard";quantity=1;
+ document.getElementById("homePage").style.display="none";document.getElementById("detailPage").style.display="block";
+ document.getElementById("detailCategory").textContent=selectedEvent.category.toUpperCase()+" · ABIDJAN";
+ document.getElementById("detailPosterTitle").textContent=selectedEvent.short;
+ document.getElementById("detailTitle").textContent=selectedEvent.title;
+ document.getElementById("detailDescription").textContent=selectedEvent.description;
+ document.getElementById("detailDate").textContent=selectedEvent.date;
+ document.getElementById("detailVenue").textContent=selectedEvent.venue;
+ document.getElementById("detailTime").textContent=selectedEvent.time;
+ renderChoices();updateTotal();window.scrollTo({top:0,behavior:"smooth"});
+}
+function renderChoices(){
+ const choices=[{type:"Standard",price:selectedEvent.price,desc:"Accès standard"},{type:"VIP",price:selectedEvent.vip,desc:"Formule VIP — à confirmer"}];
+ document.getElementById("ticketChoices").innerHTML=choices.map(t=>`<div class="ticket-choice ${selectedType===t.type?"selected":""}" data-type="${t.type}"><div><strong>${t.type}</strong><small>${t.desc}</small></div><strong>${money(t.price)}</strong></div>`).join("");
+ document.querySelectorAll("[data-type]").forEach(el=>el.addEventListener("click",()=>{selectedType=el.dataset.type;renderChoices();updateTotal()}));
+}
+function updateTotal(){document.getElementById("quantityValue").textContent=quantity;document.getElementById("totalPrice").textContent=money((selectedType==="VIP"?selectedEvent.vip:selectedEvent.price)*quantity)}
+document.getElementById("filters").addEventListener("click",e=>{const b=e.target.closest("[data-filter]");if(!b)return;activeFilter=b.dataset.filter;document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x===b));renderEvents()});
+document.getElementById("searchButton").addEventListener("click",renderEvents);
+document.getElementById("searchInput").addEventListener("input",renderEvents);
+document.getElementById("minusButton").addEventListener("click",()=>{quantity=Math.max(1,quantity-1);updateTotal()});
+document.getElementById("plusButton").addEventListener("click",()=>{quantity=Math.min(10,quantity+1);updateTotal()});
+document.getElementById("buyButton").addEventListener("click",()=>{document.getElementById("checkoutNotice").textContent="Étape suivante à développer : formulaire client, paiement Mobile Money et émission d’un QR code après confirmation. Aucun achat réel n’a été effectué.";});
+document.getElementById("backButton").addEventListener("click",()=>{document.getElementById("detailPage").style.display="none";document.getElementById("homePage").style.display="block";window.scrollTo({top:0,behavior:"smooth"})});
+document.getElementById("homeLink").addEventListener("click",e=>{e.preventDefault();document.getElementById("detailPage").style.display="none";document.getElementById("homePage").style.display="block";window.scrollTo({top:0,behavior:"smooth"})});
+document.getElementById("year").textContent=new Date().getFullYear();
+renderEvents();
+</script>
+</body>
+</html>
