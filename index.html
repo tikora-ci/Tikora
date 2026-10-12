@@ -144,7 +144,19 @@ footer .foot{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
   </section>
 </main>
 <footer><div class="wrap foot"><strong style="color:#fff;letter-spacing:.15em">TIKORA</strong><span>Ton ticket. Ton accès.</span><span>© <span id="year"></span> TIKORA — Prototype</span></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = "https://drgrpsaesdvicryppqvz.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_CWZMH5J20YutMOo3Ry3ygQ_k4bt658E";
+
+const supabaseClient = window.supabase.createClient(
+
+  SUPABASE_URL,
+
+  SUPABASE_KEY
+
+);
 const events=[
  {id:1,title:"JET7 X LAST NIGHT SHOW EVENT",short:"JET7 X LAST NIGHT SHOW",category:"Concert",date:"15 août (indicatif)",time:"À partir de 15 h (indicatif)",venue:"Abidjan, Côte d’Ivoire",price:5000,vip:15000,description:"Un rendez-vous musical et festif avec artistes, DJ et animations. La date, le lieu exact et les tarifs devront être confirmés par l’organisateur."},
  {id:2,title:"BABI COMEDY NIGHT",short:"BABI COMEDY NIGHT",category:"Humour",date:"22 août (indicatif)",time:"20 h (indicatif)",venue:"Abidjan, Côte d’Ivoire",price:3000,vip:10000,description:"Une soirée dédiée à l’humour et aux talents du stand-up. Informations données à titre de démonstration."},
@@ -186,7 +198,48 @@ document.getElementById("buyButton").addEventListener("click",()=>{document.getE
 document.getElementById("backButton").addEventListener("click",()=>{document.getElementById("detailPage").style.display="none";document.getElementById("homePage").style.display="block";window.scrollTo({top:0,behavior:"smooth"})});
 document.getElementById("homeLink").addEventListener("click",e=>{e.preventDefault();document.getElementById("detailPage").style.display="none";document.getElementById("homePage").style.display="block";window.scrollTo({top:0,behavior:"smooth"})});
 document.getElementById("year").textContent=new Date().getFullYear();
-renderEvents();
+
+async function loadEventsFromSupabase() {
+  const { data, error } = await supabaseClient
+    .from("events")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (error) {
+    console.error("Erreur Supabase :", error);
+    renderEvents();
+    return;
+  }
+
+  if (data && data.length > 0) {
+    events.splice(0, events.length, ...data.map((e, index) => ({
+      id: Number(e.id),
+      title: e.title,
+      short: e.title,
+      category: "Concert",
+      date: e.event_date
+        ? new Date(e.event_date).toLocaleDateString("fr-FR")
+        : "Date à confirmer",
+      time: e.event_date
+        ? new Date(e.event_date).toLocaleTimeString("fr-FR", {
+            hour: "2-digit",
+            minute: "2-digit"
+          })
+        : "Heure à confirmer",
+      venue: e.location || "Abidjan, Côte d’Ivoire",
+      price: Number(e.ticket_price || 5000),
+      vip: Number(e.ticket_price || 5000) * 3,
+      description: e.description || "Description à venir."
+    })));
+
+    selectedEvent = events[0];
+  }
+
+  renderEvents();
+}
+
+loadEventsFromSupabase();
+
 </script>
 </body>
 </html>
