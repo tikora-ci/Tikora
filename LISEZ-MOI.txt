@@ -1,0 +1,19 @@
+TIKORA — Prototype de départ
+============================
+
+Contenu
+- index.html : prototype responsive de la page d'accueil et de la page détail d'événement.
+- Fonctionnalités démo : recherche, filtres, sélection d'événement, choix Standard/VIP, quantité et calcul du total.
+
+Important
+- Ce prototype est une interface frontend. Il ne contient pas de serveur, de base de données, de paiement réel, de compte organisateur, ni de QR codes valides.
+- Les événements, dates et tarifs sont des exemples à remplacer.
+- Ne pas utiliser pour vendre des billets réels avant d'avoir ajouté et testé le backend, la vérification des paiements, la sécurité et le contrôle d'accès.
+
+Pour l'essayer depuis un iPhone
+1. Télécharge le fichier ZIP et décompresse-le dans l'app Fichiers.
+2. Le plus simple pour tester et publier depuis un iPhone est d'utiliser un éditeur/hébergeur en ligne qui permet d'importer ou coller le code HTML.
+3. Le fichier index.html peut être ouvert dans un navigateur pour inspecter le prototype, mais certaines apps Fichiers n'affichent pas les pages HTML comme un vrai site hébergé.
+
+Prochaine étape
+Connecter le site à un backend sécurisé, puis choisir une solution de paiement adaptée à la Côte d'Ivoire et générer des QR codes uniques seulement après confirmation serveur du paiement.
