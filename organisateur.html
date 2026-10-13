@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organisateurs | TIKORA</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #080808;
+      color: #f6f6f6;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+
+    header {
+      padding: 22px;
+      border-bottom: 1px solid #292929;
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: .12em;
+    }
+
+    header span {
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      margin-right: 8px;
+      border-radius: 6px;
+      background: white;
+      color: black;
+    }
+
+    main {
+      width: min(650px, 92%);
+      margin: 40px auto;
+    }
+
+    .muted { color: #aaa; }
+
+    form {
+      padding: 24px;
+      border: 1px solid #292929;
+      border-radius: 16px;
+      background: #111;
+    }
+
+    label {
+      display: block;
+      margin: 18px 0 7px;
+      font-size: .9rem;
+      font-weight: 650;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #383838;
+      border-radius: 8px;
+      background: #080808;
+      color: white;
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 24px;
+      padding: 14px;
+      border: 0;
+      border-radius: 8px;
+      background: white;
+      color: black;
+      font: inherit;
+      font-weight: 800;
+    }
+
+    .notice {
+      margin-top: 18px;
+      padding: 14px;
+      border: 1px solid #383838;
+      border-radius: 8px;
+      color: #bbb;
+      font-size: .88rem;
+    }
+  </style>
+</head>
+<body>
+  <header><span>T</span>TIKORA</header>
+
+  <main>
+    <h1>Publier un événement</h1>
+    <p class="muted">
+      Prépare ton événement et partage-le avec le public.
+    </p>
+
+    <form id="eventForm">
+      <label for="title">Nom de l’événement *</label>
+      <input id="title" required
+        placeholder="Ex. Concert de musique">
+
+      <label for="description">Description *</label>
+      <textarea id="description" required
+        placeholder="Présente ton événement"></textarea>
+
+      <label for="location">Lieu *</label>
+      <input id="location" required
+        placeholder="Ex. Abidjan, Côte d’Ivoire">
+
+      <label for="event_date">Date et heure *</label>
+      <input id="event_date" type="datetime-local" required>
+
+      <label for="ticket_price">Prix du ticket (FCFA) *</label>
+      <input id="ticket_price" type="number" min="0" required
+        placeholder="Ex. 5000">
+
+      <label for="poster_url">Lien de l’affiche (facultatif)</label>
+      <input id="poster_url" type="url"
+        placeholder="https://...">
+
+      <button type="submit">Préparer mon événement</button>
+
+      <div class="notice" id="notice" role="status">
+        Formulaire de démonstration : aucun événement n’est encore publié.
+      </div>
+    </form>
+  </main>
+
+  <script>
+    document.getElementById("eventForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      document.getElementById("notice").textContent =
+        "Le formulaire fonctionne, mais la publication réelle sera activée après la connexion sécurisée à Supabase.";
+    });
+  </script>
+</body>
+</html>
