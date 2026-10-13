@@ -97,6 +97,26 @@
 
   <main>
     
+<section id="resetSection" hidden>
+  <h2>Réinitialiser ton mot de passe</h2>
+  <p class="muted">Choisis un nouveau mot de passe pour ton compte TIKORA.</p>
+
+  <form id="resetForm">
+    <label for="newPassword">Nouveau mot de passe</label>
+    <input
+      id="newPassword"
+      type="password"
+      minlength="6"
+      autocomplete="new-password"
+      placeholder="6 caractères minimum"
+      required
+    >
+
+    <button type="submit">Enregistrer mon nouveau mot de passe</button>
+    <p id="resetMessage" class="notice" role="status"></p>
+  </form>
+</section>
+
     <section id="authSection">
       <h2>Ton espace organisateur</h2>
       <p class="muted">Crée ton compte ou connecte-toi pour continuer.</p>
@@ -221,6 +241,45 @@
     document.getElementById("notice").textContent =
       "La connexion est préparée. La publication des événements sera activée à l'étape suivante.";
   });
+  
+  const resetSection = document.getElementById("resetSection");
+  const resetForm = document.getElementById("resetForm");
+  const resetMessage = document.getElementById("resetMessage");
+  const authSection = document.getElementById("authSection");
+
+  // Vérifier si l'utilisateur arrive avec un lien de récupération
+  const hashParams = new URLSearchParams(window.location.hash.substring(1));
+  const isRecovery = hashParams.get("type") === "recovery";
+
+  if (isRecovery) {
+    authSection.hidden = true;
+    resetSection.hidden = false;
+  }
+
+  resetForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const newPassword = document.getElementById("newPassword").value;
+    resetMessage.textContent = "Mise à jour du mot de passe...";
+
+    const { error } = await supabaseClient.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) {
+      resetMessage.textContent = "Erreur : " + error.message;
+      return;
+    }
+
+    resetMessage.textContent =
+      "Mot de passe modifié ! Tu peux maintenant te connecter.";
+
+    resetForm.reset();
+    authSection.hidden = false;
+    resetSection.hidden = true;
+    window.history.replaceState(null, "", window.location.pathname);
+  });
+
 </script>
 </body>
 </html>
