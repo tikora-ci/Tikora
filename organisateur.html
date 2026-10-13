@@ -131,6 +131,10 @@
           autocomplete="current-password" minlength="6"
           placeholder="6 caractères minimum" required>
 
+<p>
+  <a href="#" id="forgotPasswordLink">Mot de passe oublié ?</a>
+</p>
+
         <button type="submit" id="loginButton">Se connecter</button>
         <button type="button" id="signupButton">Créer mon compte</button>
 
@@ -215,6 +219,35 @@
     authMessage.textContent = data.session
       ? "Compte créé et connecté !"
       : "Compte créé. Vérifie tes e-mails pour confirmer ton adresse.";
+  });
+
+  async function sendPasswordReset(email) {
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: "https://tikora-ci.github.io/Tikora/organisateur.html"
+  });
+
+  if (error) {
+    authMessage.textContent = "Erreur : " + error.message;
+    return;
+  }
+
+  authMessage.textContent =
+    "E-mail de récupération envoyé. Vérifie ta boîte mail.";
+}
+
+  document.getElementById("forgotPasswordLink").addEventListener("click", async function(event) {
+    event.preventDefault();
+
+    const email = document.getElementById("authEmail").value.trim();
+
+    if (!email) {
+      authMessage.textContent = "Entre d'abord ton adresse e-mail.";
+      return;
+    }
+
+    authMessage.textContent = "Envoi de l'e-mail de récupération...";
+
+    await sendPasswordReset(email);
   });
 
   authForm.addEventListener("submit", async function(event) {
