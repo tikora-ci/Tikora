@@ -96,6 +96,30 @@
   <header><span>T</span>TIKORA</header>
 
   <main>
+    
+    <section id="authSection">
+      <h2>Ton espace organisateur</h2>
+      <p class="muted">Crée ton compte ou connecte-toi pour continuer.</p>
+
+      <form id="authForm">
+        <label for="authEmail">Adresse e-mail</label>
+        <input id="authEmail" type="email" autocomplete="email"
+          placeholder="toi@exemple.com" required>
+
+        <label for="authPassword">Mot de passe</label>
+        <input id="authPassword" type="password"
+          autocomplete="current-password" minlength="6"
+          placeholder="6 caractères minimum" required>
+
+        <button type="submit" id="loginButton">Se connecter</button>
+        <button type="button" id="signupButton">Créer mon compte</button>
+
+        <p id="authMessage" class="notice" role="status">
+          Inscris-toi ou connecte-toi pour accéder à ton espace.
+        </p>
+      </form>
+    </section>
+
     <h1>Publier un événement</h1>
     <p class="muted">
       Prépare ton événement et partage-le avec le public.
@@ -133,13 +157,70 @@
     </form>
   </main>
 
-  <script>
-    document.getElementById("eventForm").addEventListener("submit", function(event) {
-      event.preventDefault();
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://drgrpsaesdvicryppqvz.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_CWZMH5J20Yut-MOo3Ry3ygQ_k4bt658E";
 
-      document.getElementById("notice").textContent =
-        "Le formulaire fonctionne, mais la publication réelle sera activée après la connexion sécurisée à Supabase.";
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  const authForm = document.getElementById("authForm");
+  const authMessage = document.getElementById("authMessage");
+  const signupButton = document.getElementById("signupButton");
+
+  signupButton.addEventListener("click", async function() {
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value;
+
+    if (!email || !password) {
+      authMessage.textContent = "Renseigne ton e-mail et ton mot de passe.";
+      return;
+    }
+
+    authMessage.textContent = "Création du compte en cours...";
+
+    const { data, error } = await supabaseClient.auth.signUp({
+      email: email,
+      password: password
     });
-  </script>
+
+    if (error) {
+      authMessage.textContent = "Erreur : " + error.message;
+      return;
+    }
+
+    authMessage.textContent = data.session
+      ? "Compte créé et connecté !"
+      : "Compte créé. Vérifie tes e-mails pour confirmer ton adresse.";
+  });
+
+  authForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value;
+
+    authMessage.textContent = "Connexion en cours...";
+
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    authMessage.textContent = error
+      ? "Erreur : " + error.message
+      : "Connexion réussie ! Ton espace organisateur est connecté.";
+  });
+
+  document.getElementById("eventForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    document.getElementById("notice").textContent =
+      "La connexion est préparée. La publication des événements sera activée à l'étape suivante.";
+  });
+</script>
 </body>
 </html>
