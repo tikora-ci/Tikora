@@ -268,12 +268,52 @@
       : "Connexion réussie ! Ton espace organisateur est connecté.";
   });
 
-  document.getElementById("eventForm").addEventListener("submit", function(event) {
-    event.preventDefault();
+  
+document.getElementById("eventForm").addEventListener("submit", async function(event) {
+  event.preventDefault();
 
-    document.getElementById("notice").textContent =
-      "La connexion est préparée. La publication des événements sera activée à l'étape suivante.";
-  });
+  const notice = document.getElementById("notice");
+  notice.textContent = "Publication en cours...";
+
+  try {
+    const { data: { user }, error: userError } =
+      await supabaseClient.auth.getUser();
+
+    if (userError || !user) {
+      notice.textContent = "Connecte-toi à ton compte organisateur avant de publier.";
+      return;
+    }
+
+    const title = document.getElementById("title").value.trim();
+    const description = document.getElementById("description").value.trim();
+    const location = document.getElementById("location").value.trim();
+    const eventDate = document.getElementById("event_date").value;
+    const ticketPrice = Number(document.getElementById("ticket_price").value);
+    const posterUrl = document.getElementById("poster_url").value.trim();
+
+    const { error } = await supabaseClient
+      .from("events")
+      .insert({
+        title: title,
+        description: description,
+        location: location,
+        event_date: new Date(eventDate).toISOString(),
+        ticket_price: ticketPrice,
+        poster_url: posterUrl || null,
+        organizer_id: user.id
+      });
+
+    if (error) throw error;
+
+    notice.textContent = "Événement enregistré avec succès !";
+    document.getElementById("eventForm").reset();
+
+  } catch (error) {
+    console.error("Erreur de publication :", error);
+    notice.textContent = "Échec de la publication : " + error.message;
+  }
+});
+
   
   const resetSection = document.getElementById("resetSection");
   const resetForm = document.getElementById("resetForm");
