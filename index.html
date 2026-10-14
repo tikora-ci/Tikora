@@ -326,11 +326,10 @@ document.getElementById("reservationButton").addEventListener("click", async () 
     notice.textContent =
       "Réservation enregistrée ! Référence : " + data.id +
       ". Aucun paiement effectué et aucun ticket émis.";
+  
   } catch (error) {
     console.error("Erreur réservation TIKORA :", error);
-notice.textContent = "Erreur : " + (error.message || JSON.stringify(error));
-    notice.textContent =
-      "Erreur technique : regarde la console du navigateur.";
+    notice.textContent = "Erreur : " + (error.message || JSON.stringify(error));
   } finally {
     button.disabled = false;
   }
