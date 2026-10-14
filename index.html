@@ -317,9 +317,7 @@ document.getElementById("reservationButton").addEventListener("click", async () 
         ticket_type: selectedType,
         quantity: quantity,
         total_fcfa: total
-      }])
-      .select("id")
-      .single();
+          }]);
 
     if (error) throw error;
 
