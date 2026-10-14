@@ -330,7 +330,7 @@ document.getElementById("reservationButton").addEventListener("click", async () 
     console.error("Erreur réservation TIKORA :", error);
 notice.textContent = "Erreur : " + (error.message || JSON.stringify(error));
     notice.textContent =
-      "Impossible d'enregistrer la réservation. Réessaie dans un instant.";
+      "Erreur technique : regarde la console du navigateur.";
   } finally {
     button.disabled = false;
   }
