@@ -286,27 +286,55 @@ document.getElementById("buyButton").addEventListener("click",()=>{
   form.scrollIntoView({behavior:"smooth",block:"start"});
 });
 
-document.getElementById("reservationButton").addEventListener("click",()=>{
-  const name=document.getElementById("customerName").value.trim();
-  const phone=document.getElementById("customerPhone").value.trim();
-  const email=document.getElementById("customerEmail").value.trim();
-  const notice=document.getElementById("reservationNotice");
 
-  if(!name||!phone){
-    notice.textContent="Entre ton nom complet et ton numéro de téléphone.";
+document.getElementById("reservationButton").addEventListener("click", async () => {
+  const name = document.getElementById("customerName").value.trim();
+  const phone = document.getElementById("customerPhone").value.trim();
+  const email = document.getElementById("customerEmail").value.trim();
+  const notice = document.getElementById("reservationNotice");
+  const button = document.getElementById("reservationButton");
+
+  if (!name || !phone) {
+    notice.textContent = "Entre ton nom complet et ton numéro de téléphone.";
     return;
   }
 
-  notice.textContent=
-    "Informations reçues pour la préparation de ta réservation. "+
-    "Événement : "+selectedEvent.title+
-    " · Ticket : "+selectedType+
-    " · Quantité : "+quantity+
-    " · Total : "+money((selectedType==="VIP"?selectedEvent.vip:selectedEvent.price)*quantity)+
-    ". Aucun paiement effectué et aucun ticket émis.";
+  const total = (selectedType === "VIP"
+    ? selectedEvent.vip
+    : selectedEvent.price) * quantity;
 
-  console.log("Pré-réservation TIKORA",{name,phone,email,event:selectedEvent.title,type:selectedType,quantity});
+  button.disabled = true;
+  notice.textContent = "Enregistrement de ta réservation...";
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("reservations")
+      .insert([{
+        customer_name: name,
+        customer_phone: phone,
+        customer_email: email || null,
+        event_title: selectedEvent.title,
+        ticket_type: selectedType,
+        quantity: quantity,
+        total_fcfa: total
+      }])
+      .select("id")
+      .single();
+
+    if (error) throw error;
+
+    notice.textContent =
+      "Réservation enregistrée ! Référence : " + data.id +
+      ". Aucun paiement effectué et aucun ticket émis.";
+  } catch (error) {
+    console.error("Erreur réservation TIKORA :", error);
+    notice.textContent =
+      "Impossible d'enregistrer la réservation. Réessaie dans un instant.";
+  } finally {
+    button.disabled = false;
+  }
 });
+
 
 document.getElementById("backButton").addEventListener("click",()=>{document.getElementById("detailPage").style.display="none";document.getElementById("homePage").style.display="block";window.scrollTo({top:0,behavior:"smooth"})});
 document.getElementById("homeLink").addEventListener("click",e=>{e.preventDefault();document.getElementById("detailPage").style.display="none";document.getElementById("homePage").style.display="block";window.scrollTo({top:0,behavior:"smooth"})});
