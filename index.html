@@ -322,8 +322,7 @@ document.getElementById("reservationButton").addEventListener("click", async () 
     if (error) throw error;
 
     notice.textContent =
-      "Réservation enregistrée ! Référence : " + data.id +
-      ". Aucun paiement effectué et aucun ticket émis.";
+  "Réservation enregistrée ! Aucun paiement effectué et aucun ticket émis.";
   
   } catch (error) {
     console.error("Erreur réservation TIKORA :", error);
