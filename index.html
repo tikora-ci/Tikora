@@ -209,6 +209,19 @@ footer .foot{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
           <div class="total"><span class="muted">Total estimé</span><strong id="totalPrice">5 000 FCFA</strong></div>
           <button class="btn" id="buyButton" style="width:100%">Continuer (démo) →</button>
           <p class="notice" id="checkoutNotice">Aucun paiement réel n’est activé sur cette maquette.</p>
+          
+<div id="reservationForm" style="display:none;margin-top:20px;padding:18px;background:#171717;border-radius:12px">
+  <h3>Informations du client</h3>
+  <label for="customerName">Nom complet</label>
+  <input id="customerName" type="text" placeholder="Ton nom complet" required style="display:block;width:100%;padding:12px;margin:8px 0 14px">
+  <label for="customerPhone">Numéro de téléphone</label>
+  <input id="customerPhone" type="tel" placeholder="Ex. 0700000000" required style="display:block;width:100%;padding:12px;margin:8px 0 14px">
+  <label for="customerEmail">E-mail (facultatif)</label>
+  <input id="customerEmail" type="email" placeholder="ton@email.com" style="display:block;width:100%;padding:12px;margin:8px 0 14px">
+  <button class="btn" id="reservationButton" type="button" style="width:100%">Confirmer les informations</button>
+  <p id="reservationNotice" class="notice"></p>
+</div>
+
         </div>
       </div>
     </div>
@@ -265,7 +278,36 @@ document.getElementById("searchButton").addEventListener("click",renderEvents);
 document.getElementById("searchInput").addEventListener("input",renderEvents);
 document.getElementById("minusButton").addEventListener("click",()=>{quantity=Math.max(1,quantity-1);updateTotal()});
 document.getElementById("plusButton").addEventListener("click",()=>{quantity=Math.min(10,quantity+1);updateTotal()});
-document.getElementById("buyButton").addEventListener("click",()=>{document.getElementById("checkoutNotice").textContent="Étape suivante à développer : formulaire client, paiement Mobile Money et émission d’un QR code après confirmation. Aucun achat réel n’a été effectué.";});
+
+document.getElementById("buyButton").addEventListener("click",()=>{
+  const form=document.getElementById("reservationForm");
+  form.style.display="block";
+  document.getElementById("checkoutNotice").textContent="Remplis tes informations pour préparer ta réservation.";
+  form.scrollIntoView({behavior:"smooth",block:"start"});
+});
+
+document.getElementById("reservationButton").addEventListener("click",()=>{
+  const name=document.getElementById("customerName").value.trim();
+  const phone=document.getElementById("customerPhone").value.trim();
+  const email=document.getElementById("customerEmail").value.trim();
+  const notice=document.getElementById("reservationNotice");
+
+  if(!name||!phone){
+    notice.textContent="Entre ton nom complet et ton numéro de téléphone.";
+    return;
+  }
+
+  notice.textContent=
+    "Informations reçues pour la préparation de ta réservation. "+
+    "Événement : "+selectedEvent.title+
+    " · Ticket : "+selectedType+
+    " · Quantité : "+quantity+
+    " · Total : "+money((selectedType==="VIP"?selectedEvent.vip:selectedEvent.price)*quantity)+
+    ". Aucun paiement effectué et aucun ticket émis.";
+
+  console.log("Pré-réservation TIKORA",{name,phone,email,event:selectedEvent.title,type:selectedType,quantity});
+});
+
 document.getElementById("backButton").addEventListener("click",()=>{document.getElementById("detailPage").style.display="none";document.getElementById("homePage").style.display="block";window.scrollTo({top:0,behavior:"smooth"})});
 document.getElementById("homeLink").addEventListener("click",e=>{e.preventDefault();document.getElementById("detailPage").style.display="none";document.getElementById("homePage").style.display="block";window.scrollTo({top:0,behavior:"smooth"})});
 document.getElementById("year").textContent=new Date().getFullYear();
