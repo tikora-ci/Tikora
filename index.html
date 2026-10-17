@@ -322,10 +322,25 @@ const { data, error } = await supabaseClient.functions.invoke(
   }
 );
 
-if (error) throw error;
+
+if (error) {
+  let details = "";
+
+  try {
+    details = await error.context?.text();
+  } catch (_) {}
+
+  console.error("Erreur rapid-api :", error, details);
+
+  throw new Error(
+    details || error.message || "La réservation a échoué."
+  );
+}
+
 if (!data || !data.success) {
   throw new Error(data?.error || "La réservation a échoué.");
 }
+
 
 
     notice.textContent =
