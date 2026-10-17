@@ -307,19 +307,26 @@ document.getElementById("reservationButton").addEventListener("click", async () 
   notice.textContent = "Enregistrement de ta réservation...";
 
   try {
-    const { data, error } = await supabaseClient
-      .from("reservations")
-      .insert([{
-        customer_name: name,
-        customer_phone: phone,
-        customer_email: email || null,
-        event_title: selectedEvent.title,
-        ticket_type: selectedType,
-        quantity: quantity,
-        total_fcfa: total
-          }]);
+    
+const { data, error } = await supabaseClient.functions.invoke(
+  "rapid-api",
+  {
+    body: {
+      customer_name: name,
+      customer_phone: phone,
+      customer_email: email || null,
+      event_title: selectedEvent.title,
+      ticket_type: selectedType,
+      quantity: quantity
+    }
+  }
+);
 
-    if (error) throw error;
+if (error) throw error;
+if (!data || !data.success) {
+  throw new Error(data?.error || "La réservation a échoué.");
+}
+
 
     notice.textContent =
   "Réservation enregistrée ! Aucun paiement effectué et aucun ticket émis.";
